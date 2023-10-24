@@ -44,11 +44,12 @@ imgBasic.onload = () => {
 
 // 캐릭터 객체
 let character = {
-  x: 90, // 캐릭터의 초기 x 좌표
-  y: canvas.height - 120, // 캐릭터의 초기 y 좌표
+  x: canvas.width / 2 - 70, // 캐릭터의 초기 x 좌표
+  y: canvas.height - 115, // 캐릭터의 초기 y 좌표
   width: 70, // 캐릭터의 너비
-  height: 120, // 캐릭터의 높이
+  height: 115, // 캐릭터의 높이
   img: imgBasic, // 캐릭터 이미지
+
   draw() {
     ctx.drawImage(this.img, this.x, this.y, this.width, this.height); // 캐릭터를 캔버스에 그림
   },
@@ -69,15 +70,20 @@ const imgObstacle3 = new Image();
 imgObstacle3.src = "./img/1.png";
 obstacleImages.push(imgObstacle3);
 
+const imgObstacle4 = new Image();
+imgObstacle4.src = "./img/1.png";
+obstacleImages.push(imgObstacle4);
+
 // 장애물 클래스
 class Obstacle {
-  constructor(x, y, width, height, speed, image) {
+  constructor(x, y, width, height, speed, image, special) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
     this.image = image;
     this.speed = speed;
+    this.special = special;
   }
 
   draw() {
@@ -94,14 +100,15 @@ const obstacles = [];
 
 // 장애물 종류 및 초기화 함수
 const obstacleTypes = [
-  { width: 50, height: 46, speed: 2, image: obstacleImages[0] },
-  { width: 51, height: 39, speed: 3, image: obstacleImages[1] },
-  { width: 50, height: 30, speed: 4, image: obstacleImages[2] },
+  { width: 50, height: 46, speed: 3, image: obstacleImages[0], special: false },
+  { width: 51, height: 39, speed: 4, image: obstacleImages[1], special: false },
+  { width: 50, height: 30, speed: 5, image: obstacleImages[2], special: false },
+  { width: 30, height: 30, speed: 7, image: obstacleImages[3], special: true },
 ];
 
 // 초기 장애물 생성
 function initObstacles() {
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < obstacleTypes.length; i++) {
     obstacles.push(getRandomObstacle());
   }
 }
@@ -112,7 +119,7 @@ function getRandomObstacle() {
   const type = obstacleTypes[randomIndex];
   const x = Math.random() * (canvas.width - type.width); // 장애물의 x 좌표 설정
   let y = canvas.height - 600; // 장애물의 초기 y 좌표 설정
-  return new Obstacle(x, y, type.width, type.height, type.speed, type.image); // 새로운 장애물 객체 반환
+  return new Obstacle(x, y, type.width, type.height, type.speed, type.image, type.special); // 새로운 장애물 객체 반환
 }
 
 // 장애물 이동
@@ -124,12 +131,27 @@ function moveObstacles() {
 
 let invincible = false; // 무적 상태 변수
 
+let noScore = false; // 점수가 계속 오르는 변수 방지
+
+let life = 3; // 생명력
 // 충돌 확인
 function checkCollisions() {
   for (const obstacle of obstacles) {
     if (!invincible && character.x < obstacle.x + obstacle.width && character.x + character.width > obstacle.x && character.y < obstacle.y + obstacle.height && character.y + character.height > obstacle.y) {
-      life--; // 충돌 시 생명력 감소
-      makeCharacterInvincible(); // 캐릭터를 일시적으로 무적 상태로 설정
+      console.log(obstacle);
+      if (obstacle.special) {
+        if (!noScore) {
+          noScore = true;
+          score += 500;
+          setTimeout(() => {
+            noScore = false;
+          }, 1000);
+        }
+      } else {
+        makeCharacterInvincible();
+        life--;
+        score -= 100;
+      }
     }
   }
 }
@@ -137,7 +159,7 @@ function checkCollisions() {
 // 무적 상태 설정
 function makeCharacterInvincible() {
   if (!invincible) {
-    invincible = true; // 무적 상태 설정
+    invincible = true;
     setTimeout(() => {
       invincible = false; // 일정 시간 후 무적 상태 해제
     }, 2000); // 2초 동안 무적 상태 유지
@@ -155,11 +177,11 @@ function checkEndGame() {
 function endGame() {
   cancelAnimationFrame(animation); // 현재 게임 애니메이션 프레임 초기화
   obstacles.length = 0; // 장애물 배열을 초기화
-  ctx.fillStyle = "black"; // 글자 색상 설정
-  ctx.font = "48px Arial"; // 글자 크기 및 폰트 설정
-  ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2 - 40); // 게임 오버 메시지 출력
-  ctx.font = "24px Arial"; // 글자 크기 및 폰트 설정
-  ctx.fillText(`Score: ${score}`, canvas.width / 2 - 40, canvas.height / 2 + 20); // 스코어 출력
+  ctx.fillStyle = "black";
+  ctx.font = "48px Arial";
+  ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2 - 40);
+  ctx.font = "24px Arial";
+  ctx.fillText(`Score: ${score}`, canvas.width / 2 - 40, canvas.height / 2 + 20);
   playBtn.style.display = "block"; // 게임 시작 버튼 화면에 표시
 }
 
@@ -202,14 +224,14 @@ function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height); // 캔버스를 지움
   moveObstacles(); // 장애물 이동 처리
 
-  if (timer % 240 === 0) {
+  if (timer % 60 === 0) {
     obstacles.push(getRandomObstacle()); // 일정 간격마다 새로운 장애물 생성
   }
 
   obstacles.forEach((obstacle, i, array) => {
     if (obstacle.y + obstacle.height > 600) {
       array.splice(i, 1); // 장애물이 화면 아래로 벗어났을 때 배열에서 제거
-      score += 100; // 스코어 100점 추가
+      score += 20; // 스코어 20점 추가
     }
     obstacle.draw();
   });
