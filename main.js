@@ -14,6 +14,63 @@ let animation; // 게임 애니메이션 프레임
 let left = false; // 왼쪽 화살표 키 상태 (눌림/안눌림)
 let right = false; // 오른쪽 화살표 키 상태 (눌림/안눌림)
 
+let imgBasic = new Image(); // 기본 캐릭터 이미지 객체 생성
+imgBasic.src = "./img/character.png"; // 이미지 파일 경로 설정
+
+let characterFrames = [
+  { x: 0, y: 0, width: 39, height: 66 },
+  { x: 43, y: 0, width: 39, height: 66 },
+  { x: 86, y: 0, width: 39, height: 66 },
+  { x: 128, y: 0, width: 39, height: 66 },
+  { x: 0, y: 71, width: 39, height: 66 },
+  { x: 43, y: 71, width: 39, height: 66 },
+  { x: 86, y: 71, width: 39, height: 66 },
+  { x: 128, y: 71, width: 39, height: 66 },
+  { x: 172, y: 71, width: 39, height: 66 },
+  { x: 215, y: 71, width: 39, height: 66 },
+  { x: 258, y: 71, width: 39, height: 66 },
+  { x: 301, y: 71, width: 39, height: 66 },
+  { x: 0, y: 144, width: 39, height: 66 },
+];
+
+let currentFrame = 0; // 현재 프레임 인덱스
+
+function updateCharacterFrame() {
+  if (invincible) {
+    character.frameInfo = characterFrames[12];
+    return; // 무적이 상태일때 애니메이션을 중지
+  }
+  if (left) {
+    // 왼쪽 화살표 키가 눌렸을 때
+    currentFrame = ((currentFrame + 1) % 4) + 4; // 4부터 7까지 반복
+  } else if (right) {
+    // 오른쪽 화살표 키가 눌렸을 때
+    currentFrame = ((currentFrame + 1) % 4) + 8; // 8부터 11까지 반복
+  } else {
+    // 어떤 화살표 키도 눌리지 않았을 때
+    currentFrame = (currentFrame + 1) % 4; // 0부터 3까지 반복
+  }
+  character.frameInfo = characterFrames[currentFrame];
+}
+
+imgBasic.onload = () => {
+  character.draw(); // 이미지가 로드되면 캐릭터를 그림
+};
+
+// 캐릭터 객체
+let character = {
+  x: canvas.width / 2 - 39, // 캐릭터의 초기 x 좌표
+  y: canvas.height - 120, // 캐릭터의 초기 y 좌표
+  width: 39, // 캐릭터의 너비
+  height: 66, // 캐릭터의 높이
+  img: imgBasic, // 캐릭터 이미지
+  frameInfo: characterFrames[0], // 현재 프레임 정보
+
+  draw() {
+    ctx.drawImage(this.img, this.frameInfo.x, this.frameInfo.y, this.frameInfo.width, this.frameInfo.height, this.x, this.y, this.width, this.height);
+  },
+};
+
 // 키 다운 이벤트 처리 함수
 function handleKeyDown(e) {
   if (e.code === "ArrowLeft") {
@@ -35,43 +92,23 @@ function handleKeyUp(e) {
 document.addEventListener("keydown", handleKeyDown); // 키 다운 이벤트 리스너 등록
 document.addEventListener("keyup", handleKeyUp); // 키 업 이벤트 리스너 등록
 
-let imgBasic = new Image(); // 기본 캐릭터 이미지 객체 생성
-imgBasic.src = "./img/basic.png"; // 이미지 파일 경로 설정
-
-imgBasic.onload = () => {
-  character.draw(); // 이미지가 로드되면 캐릭터를 그림
-};
-
-// 캐릭터 객체
-let character = {
-  x: canvas.width / 2 - 60, // 캐릭터의 초기 x 좌표
-  y: canvas.height - 155, // 캐릭터의 초기 y 좌표
-  width: 60, // 캐릭터의 너비
-  height: 99, // 캐릭터의 높이
-  img: imgBasic, // 캐릭터 이미지
-
-  draw() {
-    ctx.drawImage(this.img, this.x, this.y, this.width, this.height); // 캐릭터를 캔버스에 그림
-  },
-};
-
 // 장애물 이미지 객체 배열
 const obstacleImages = [];
 
 const imgObstacle1 = new Image();
-imgObstacle1.src = "./img/1.png";
+imgObstacle1.src = "../img/st.png";
 obstacleImages.push(imgObstacle1);
 
 const imgObstacle2 = new Image();
-imgObstacle2.src = "./img/1.png";
+imgObstacle2.src = "../img/st.png";
 obstacleImages.push(imgObstacle2);
 
 const imgObstacle3 = new Image();
-imgObstacle3.src = "./img/1.png";
+imgObstacle3.src = "../img/st.png";
 obstacleImages.push(imgObstacle3);
 
 const imgObstacle4 = new Image();
-imgObstacle4.src = "./img/gift.png";
+imgObstacle4.src = "../img/gf.png";
 obstacleImages.push(imgObstacle4);
 
 // 장애물 클래스
@@ -152,6 +189,7 @@ function checkCollisions() {
         life--;
         score -= 100;
       }
+      obstacles.splice(obstacles.indexOf(obstacle), 1);
     }
   }
 }
@@ -162,6 +200,9 @@ function makeCharacterInvincible() {
     invincible = true;
     setTimeout(() => {
       invincible = false; // 일정 시간 후 무적 상태 해제
+      character.frameInfo = characterFrames[0];
+      left = false; // 왼쪽 이동 비활성화
+      right = false; // 오른쪽 이동 비활성화
     }, 2000); // 2초 동안 무적 상태 유지
   }
 }
@@ -183,6 +224,7 @@ function endGame() {
   ctx.font = "24px Arial";
   ctx.fillText(`Score: ${score}`, canvas.width / 2 - 40, canvas.height / 2 + 20);
   playBtn.style.display = "block"; // 게임 시작 버튼 화면에 표시
+  character.frameInfo = characterFrames[15];
 }
 
 // 텍스트 그리기 함수
@@ -227,7 +269,6 @@ function animate() {
   if (timer % 60 === 0) {
     obstacles.push(getRandomObstacle()); // 일정 간격마다 새로운 장애물 생성
   }
-
   obstacles.forEach((obstacle, i, array) => {
     if (obstacle.y + obstacle.height > 600) {
       array.splice(i, 1); // 장애물이 화면 아래로 벗어났을 때 배열에서 제거
@@ -240,16 +281,25 @@ function animate() {
   checkEndGame(); // 게임 종료 확인
 
   if (left && character.x - 5 > 0) {
-    character.x -= 5; // 왼쪽 화살표 키가 눌렸고, 캐릭터가 화면 왼쪽 안쪽에 있을 때 왼쪽으로 이동
+    if (!invincible) {
+      character.x -= 5; // 왼쪽 화살표 키가 눌렸고, 캐릭터가 화면 왼쪽 안쪽에 있을 때 왼쪽으로 이동
+    }
   }
 
   if (right && character.x + character.width + 5 < canvas.width) {
-    character.x += 5; // 오른쪽 화살표 키가 눌렸고, 캐릭터가 화면 오른쪽 안쪽에 있을 때 오른쪽으로 이동
+    if (!invincible) {
+      character.x += 5; // 오른쪽 화살표 키가 눌렸고, 캐릭터가 화면 오른쪽 안쪽에 있을 때 오른쪽으로 이동
+    }
   }
 
   drawScore(); // 스코어 그리기
   drawTime(); // 시간 그리기
   drawLife(); // 생명력 그리기
+
+  if (timer % 10 === 0) {
+    updateCharacterFrame();
+  }
+
   character.draw();
 }
 
