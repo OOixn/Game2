@@ -36,7 +36,7 @@ document.addEventListener("keydown", handleKeyDown); // 키 다운 이벤트 리
 document.addEventListener("keyup", handleKeyUp); // 키 업 이벤트 리스너 등록
 
 let imgBasic = new Image(); // 기본 캐릭터 이미지 객체 생성
-imgBasic.src = "img/basic.png"; // 이미지 파일 경로 설정
+imgBasic.src = "./img/basic.png"; // 이미지 파일 경로 설정
 
 imgBasic.onload = () => {
   character.draw(); // 이미지가 로드되면 캐릭터를 그림
@@ -44,10 +44,10 @@ imgBasic.onload = () => {
 
 // 캐릭터 객체
 let character = {
-  x: canvas.width / 2 - 70, // 캐릭터의 초기 x 좌표
-  y: canvas.height - 115, // 캐릭터의 초기 y 좌표
-  width: 70, // 캐릭터의 너비
-  height: 115, // 캐릭터의 높이
+  x: canvas.width / 2 - 60, // 캐릭터의 초기 x 좌표
+  y: canvas.height - 155, // 캐릭터의 초기 y 좌표
+  width: 60, // 캐릭터의 너비
+  height: 99, // 캐릭터의 높이
   img: imgBasic, // 캐릭터 이미지
 
   draw() {
@@ -71,7 +71,7 @@ imgObstacle3.src = "./img/1.png";
 obstacleImages.push(imgObstacle3);
 
 const imgObstacle4 = new Image();
-imgObstacle4.src = "./img/1.png";
+imgObstacle4.src = "./img/gift.png";
 obstacleImages.push(imgObstacle4);
 
 // 장애물 클래스
@@ -100,9 +100,9 @@ const obstacles = [];
 
 // 장애물 종류 및 초기화 함수
 const obstacleTypes = [
-  { width: 50, height: 46, speed: 3, image: obstacleImages[0], special: false },
-  { width: 51, height: 39, speed: 4, image: obstacleImages[1], special: false },
-  { width: 50, height: 30, speed: 5, image: obstacleImages[2], special: false },
+  { width: 100, height: 98, speed: 1, image: obstacleImages[0], special: false },
+  { width: 50, height: 49, speed: 4, image: obstacleImages[1], special: false },
+  { width: 35, height: 34, speed: 5, image: obstacleImages[2], special: false },
   { width: 30, height: 30, speed: 7, image: obstacleImages[3], special: true },
 ];
 
