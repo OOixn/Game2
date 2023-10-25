@@ -224,7 +224,6 @@ function endGame() {
   ctx.font = "24px Arial";
   ctx.fillText(`Score: ${score}`, canvas.width / 2 - 40, canvas.height / 2 + 20);
   playBtn.style.display = "block"; // 게임 시작 버튼 화면에 표시
-  character.frameInfo = characterFrames[15];
 }
 
 // 텍스트 그리기 함수
