@@ -4,16 +4,19 @@ const ctx = canvas.getContext("2d");
 canvas.width = 1000;
 canvas.height = 600;
 
+// 게임 변수
 let score = 0; // 현재 점수
 let scoreInterval; // 점수 업데이트에 사용되는 인터벌
-let time = 60; // 남은 시간
+let time = 0; // 시작 시간
 let timeInterval; // 시간 업데이트에 사용되는 인터벌
 let timer = 0; // 시간 측정을 위한 타이머
 let animation; // 게임 애니메이션 프레임
 
+// 화살표 키 상태 변수
 let left = false; // 왼쪽 화살표 키 상태 (눌림/안눌림)
 let right = false; // 오른쪽 화살표 키 상태 (눌림/안눌림)
 
+// 캐릭터 이미지 객체 및 프레임 정보
 let imgBasic = new Image(); // 기본 캐릭터 이미지 객체 생성
 imgBasic.src = "./img/character.png"; // 이미지 파일 경로 설정
 
@@ -41,14 +44,14 @@ function updateCharacterFrame() {
     return; // 무적이 상태일때 애니메이션을 중지
   }
   if (left) {
-    // 왼쪽 화살표 키가 눌렸을 때
-    currentFrame = ((currentFrame + 1) % 4) + 4; // 4부터 7까지 반복
+    // 왼쪽 화살표 키가 눌렸을 때 4부터 7까지 반복
+    currentFrame = ((currentFrame + 1) % 4) + 4;
   } else if (right) {
-    // 오른쪽 화살표 키가 눌렸을 때
-    currentFrame = ((currentFrame + 1) % 4) + 8; // 8부터 11까지 반복
+    // 오른쪽 화살표 키가 눌렸을 때 8부터 11까지 반복
+    currentFrame = ((currentFrame + 1) % 4) + 8;
   } else {
-    // 어떤 화살표 키도 눌리지 않았을 때
-    currentFrame = (currentFrame + 1) % 4; // 0부터 3까지 반복
+    // 어떤 화살표 키도 눌리지 않았을 때 0부터 3까지 반복
+    currentFrame = (currentFrame + 1) % 4;
   }
   character.frameInfo = characterFrames[currentFrame];
 }
@@ -95,6 +98,7 @@ document.addEventListener("keyup", handleKeyUp); // 키 업 이벤트 리스너 
 // 장애물 이미지 객체 배열
 const obstacleImages = [];
 
+// 각 장애물 이미지 객체 생성 및 배열에 추가
 const imgObstacle1 = new Image();
 imgObstacle1.src = "../img/st.png";
 obstacleImages.push(imgObstacle1);
@@ -168,27 +172,24 @@ function moveObstacles() {
 
 let invincible = false; // 무적 상태 변수
 
-let noScore = false; // 점수가 계속 오르는 변수 방지
-
 let life = 3; // 생명력
+
 // 충돌 확인
 function checkCollisions() {
   for (const obstacle of obstacles) {
+    // 무적이 아니고, 캐릭터와 장애물이 충돌했는지 확인
     if (!invincible && character.x < obstacle.x + obstacle.width && character.x + character.width > obstacle.x && character.y < obstacle.y + obstacle.height && character.y + character.height > obstacle.y) {
       console.log(obstacle);
+      // 만약 장애물이 특수한 경우이면 점수 +200
       if (obstacle.special) {
-        if (!noScore) {
-          noScore = true;
-          score += 500;
-          setTimeout(() => {
-            noScore = false;
-          }, 1000);
-        }
+        score += 200;
       } else {
+        // 특수한 경우가 아니면 생명력 -1 점수 -100 무적 상태로 만듦
         makeCharacterInvincible();
         life--;
         score -= 100;
       }
+      // 충돌한 장애물을 장애물 배열에서 제거
       obstacles.splice(obstacles.indexOf(obstacle), 1);
     }
   }
@@ -207,17 +208,92 @@ function makeCharacterInvincible() {
   }
 }
 
-// 게임 종료 확인
-function checkEndGame() {
-  if (life === 0 || time === 0) {
-    endGame(); // 생명력이 0이거나 시간이 0일 때 게임 종료 처리
+// 게임 난이도 업데이트
+function gameUpdate() {
+  if (life === 0) {
+    endGame();
+  } else if (time >= 330) {
+    if (timer % 10 === 0) {
+      obstacles.push(getRandomObstacle());
+      obstacles.forEach((obstacle) => {
+        obstacle.speed += 1;
+      });
+    }
+  } else if (time >= 300) {
+    if (timer % 20 === 0) {
+      obstacles.push(getRandomObstacle());
+      obstacles.forEach((obstacle) => {
+        obstacle.speed += 1;
+      });
+    }
+  } else if (time >= 270) {
+    if (timer % 20 === 0) {
+      obstacles.push(getRandomObstacle());
+      obstacles.forEach((obstacle) => {
+        obstacle.speed += 0.8;
+      });
+    }
+  } else if (time >= 240) {
+    if (timer % 30 === 0) {
+      obstacles.push(getRandomObstacle());
+      obstacles.forEach((obstacle) => {
+        obstacle.speed += 0.8;
+      });
+    }
+  } else if (time >= 210) {
+    if (timer % 30 === 0) {
+      obstacles.push(getRandomObstacle());
+      obstacles.forEach((obstacle) => {
+        obstacle.speed += 0.6;
+      });
+    }
+  } else if (time >= 180) {
+    if (timer % 40 === 0) {
+      obstacles.push(getRandomObstacle());
+      obstacles.forEach((obstacle) => {
+        obstacle.speed += 0.6;
+      });
+    }
+  } else if (time >= 150) {
+    if (timer % 40 === 0) {
+      obstacles.push(getRandomObstacle());
+      obstacles.forEach((obstacle) => {
+        obstacle.speed += 0.4;
+      });
+    }
+  } else if (time > 120) {
+    if (timer % 50 === 0) {
+      obstacles.push(getRandomObstacle());
+      obstacles.forEach((obstacle) => {
+        obstacle.speed += 0.4;
+      });
+    }
+  } else if (time > 90) {
+    if (timer % 50 === 0) {
+      obstacles.push(getRandomObstacle());
+      obstacles.forEach((obstacle) => {
+        obstacle.speed += 0.2;
+      });
+    }
+  } else if (time > 60) {
+    if (timer % 60 === 0) {
+      obstacles.push(getRandomObstacle());
+      obstacles.forEach((obstacle) => {
+        obstacle.speed += 0.2;
+      });
+    }
+  } else if (time > 30) {
+    if (timer % 60 === 0) {
+      obstacles.push(getRandomObstacle());
+    }
   }
 }
 
 // 게임 종료
 function endGame() {
+  score += time * 20; // 게임 종료시 점수에 시간을 곱해서 더해줌
   cancelAnimationFrame(animation); // 현재 게임 애니메이션 프레임 초기화
-  obstacles.length = 0; // 장애물 배열을 초기화
+  obstacles.length = 0; // 장애물 배열 초기화
   ctx.fillStyle = "black";
   ctx.font = "48px Arial";
   ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2 - 40);
@@ -235,17 +311,17 @@ function drawText(text, x, y, size, color) {
 
 // 스코어 그리기
 function drawScore() {
-  drawText(`Score: ${score}`, 20, 30, 24, "black");
+  drawText(`Score: ${score}`, 220, 30, 24, "black");
 }
 
 // 시간 그리기
 function drawTime() {
-  drawText(`Time: ${time}`, 180, 30, 24, "black");
+  drawText(`Time: ${time}`, 100, 30, 24, "black");
 }
 
 // 생명력 그리기
 function drawLife() {
-  drawText(`Life: ${life}`, 300, 30, 24, "black");
+  drawText(`Life: ${life}`, 20, 30, 24, "black");
 }
 
 // 스코어 증가 함수
@@ -253,20 +329,20 @@ function increaseScore() {
   score++;
 }
 
-// 시간 감소 함수
-function decreaseTime() {
-  time -= 1;
+// 시간 증가 함수
+function increaseTime() {
+  time++;
 }
 
 // 애니메이션 함수
 function animate() {
   animation = requestAnimationFrame(animate); // 애니메이션 프레임 요청
   timer++; // 타이머 증가로 시간 경과 추적
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // 캔버스를 지움
+  ctx.clearRect(0, 0, canvas.width, canvas.height); // 캔버스 초기화
   moveObstacles(); // 장애물 이동 처리
 
-  if (timer % 60 === 0) {
-    obstacles.push(getRandomObstacle()); // 일정 간격마다 새로운 장애물 생성
+  if (timer % 70 === 0) {
+    obstacles.push(getRandomObstacle()); // 70프레임마다 새로운 장애물 생성
   }
   obstacles.forEach((obstacle, i, array) => {
     if (obstacle.y + obstacle.height > 600) {
@@ -277,7 +353,7 @@ function animate() {
   });
 
   checkCollisions(); // 충돌 확인
-  checkEndGame(); // 게임 종료 확인
+  gameUpdate(); // 게임 난이도 업데이트
 
   if (left && character.x - 5 > 0) {
     if (!invincible) {
@@ -298,7 +374,6 @@ function animate() {
   if (timer % 10 === 0) {
     updateCharacterFrame();
   }
-
   character.draw();
 }
 
@@ -313,8 +388,8 @@ function startGame() {
   animation = requestAnimationFrame(animate); // 애니메이션 시작
   score = 0; // 스코어 초기화
   scoreInterval = setInterval(increaseScore, 1000); // 스코어 증가 인터벌 설정
-  time = 60; // 시간 초기화
-  timeInterval = setInterval(decreaseTime, 1000); // 시간 감소 인터벌 설정
+  time = 0; // 시간 초기화
+  timeInterval = setInterval(increaseTime, 1000); // 시간 감소 인터벌 설정
   playBtn.style.display = "none"; // 게임 시작 버튼 숨김
   life = 3; // 생명력 초기화
 
