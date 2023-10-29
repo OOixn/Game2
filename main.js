@@ -63,7 +63,7 @@ imgBasic.onload = () => {
 // 캐릭터 객체
 let character = {
   x: canvas.width / 2 - 39, // 캐릭터의 초기 x 좌표
-  y: canvas.height - 120, // 캐릭터의 초기 y 좌표
+  y: canvas.height - 205, // 캐릭터의 초기 y 좌표
   width: 39, // 캐릭터의 너비
   height: 66, // 캐릭터의 높이
   img: imgBasic, // 캐릭터 이미지
@@ -289,39 +289,30 @@ function gameUpdate() {
   }
 }
 
+const gameOver = document.querySelector(".gameOver");
+
+// 로컬 스토리지에서 "highScore" 값을 가져오거나, 값이 없을 경우 0으로 초기화
+let highScore = localStorage.getItem("highScore") || 0;
+const highScoreItem = document.getElementById("highScore");
+highScoreItem.innerHTML = highScore;
+
 // 게임 종료
 function endGame() {
   score += time * 20; // 게임 종료시 점수에 시간을 곱해서 더해줌
   cancelAnimationFrame(animation); // 현재 게임 애니메이션 프레임 초기화
   obstacles.length = 0; // 장애물 배열 초기화
-  ctx.fillStyle = "black";
-  ctx.font = "48px Arial";
-  ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2 - 40);
-  ctx.font = "24px Arial";
-  ctx.fillText(`Score: ${score}`, canvas.width / 2 - 40, canvas.height / 2 + 20);
   playBtn.style.display = "block"; // 게임 시작 버튼 화면에 표시
-}
+  gameOver.style.display = "block"; // 게임 종료 화면에 표시
 
-// 텍스트 그리기 함수
-function drawText(text, x, y, size, color) {
-  ctx.fillStyle = color;
-  ctx.font = `${size}px Arial`;
-  ctx.fillText(text, x, y);
-}
+  // 게임 오버 시 현재 스코어와 하이스코어 비교
+  if (score > highScore) {
+    // 현재 스코어가 하이스코어를 넘어서면 업데이트
+    highScore = score;
+    // 로컬 스토리지에 하이스코어 저장
+    localStorage.setItem("highScore", highScore.toString());
+  }
 
-// 스코어 그리기
-function drawScore() {
-  drawText(`Score: ${score}`, 220, 30, 24, "black");
-}
-
-// 시간 그리기
-function drawTime() {
-  drawText(`Time: ${time}`, 100, 30, 24, "black");
-}
-
-// 생명력 그리기
-function drawLife() {
-  drawText(`Life: ${life}`, 20, 30, 24, "black");
+  highScoreItem.innerHTML = highScore;
 }
 
 // 스코어 증가 함수
@@ -334,6 +325,11 @@ function increaseTime() {
   time++;
 }
 
+const lifeId = document.querySelector("#life");
+const scoreId = document.querySelector("#score");
+const score1Id = document.querySelector("#score1");
+const timeId = document.querySelector("#time");
+
 // 애니메이션 함수
 function animate() {
   animation = requestAnimationFrame(animate); // 애니메이션 프레임 요청
@@ -345,7 +341,7 @@ function animate() {
     obstacles.push(getRandomObstacle()); // 70프레임마다 새로운 장애물 생성
   }
   obstacles.forEach((obstacle, i, array) => {
-    if (obstacle.y + obstacle.height > 600) {
+    if (obstacle.y + obstacle.height > 455) {
       array.splice(i, 1); // 장애물이 화면 아래로 벗어났을 때 배열에서 제거
       score += 20; // 스코어 20점 추가
     }
@@ -367,9 +363,10 @@ function animate() {
     }
   }
 
-  drawScore(); // 스코어 그리기
-  drawTime(); // 시간 그리기
-  drawLife(); // 생명력 그리기
+  lifeId.innerHTML = life;
+  scoreId.innerHTML = score;
+  score1Id.innerHTML = score;
+  timeId.innerHTML = time;
 
   if (timer % 10 === 0) {
     updateCharacterFrame();
@@ -378,7 +375,7 @@ function animate() {
 }
 
 const playBtn = document.getElementById("playBtn");
-playBtn.addEventListener("click", startGame); // 게임 시작 버튼에 클릭 이벤트 리스너 등록
+playBtn.addEventListener("click", startGame); // 게임 시작 버튼에 클릭 `이벤트 리스너 등록
 
 function startGame() {
   clearInterval(scoreInterval);
@@ -391,7 +388,24 @@ function startGame() {
   time = 0; // 시간 초기화
   timeInterval = setInterval(increaseTime, 1000); // 시간 감소 인터벌 설정
   playBtn.style.display = "none"; // 게임 시작 버튼 숨김
+  gameOver.style.display = "none";
   life = 3; // 생명력 초기화
 
   initObstacles(); // 장애물 초기화
 }
+
+// 오디오 요소 생성
+// const audio = new Audio("bgm.mp3"); // 오디오 파일 경로 지정
+
+// // 재생 버튼 클릭 이벤트 처리
+// const audioPlayBtn = document.getElementById("audio-play");
+
+// audioPlayBtn.addEventListener("click", function () {
+//   if (audio.paused) {
+//     audio.play();
+//     audioPlayBtn.textContent = "Audio-Pause";
+//   } else {
+//     audio.pause();
+//     audioPlayBtn.textContent = "Audio-Play";
+//   }
+// });

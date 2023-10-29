@@ -3,23 +3,60 @@ body {
   padding: 0;
   background-color: black;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
 }
 
-div {
+.a {
+  margin-bottom: 15px;
+}
+
+.b {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 50px;
+  font-size: 30px;
+  color: #fff;
+  padding: 0 30px 0 30px;
+  margin: 0;
+  /* box-sizing: border-box; */
+}
+
+p {
+  font-size: 24px;
+  letter-spacing: 5px;
+  margin: 0;
+}
+
+.wrap {
+  position: relative;
   width: 1000px;
   height: 600px;
-  margin: auto;
-  position: relative;
+  border: 3px solid #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-sizing: border-box;
+  margin: 0 auto;
 }
 
 canvas {
   width: 1000px;
   height: 600px;
-  background-image: url("../img/bg.png");
+  background-image: url("../img/2d5.jpg");
+  background-repeat: no-repeat;
   background-size: cover;
+  z-index: -1;
+}
+
+.gameOver {
+  position: absolute;
+  top: 40%;
+  left: 40%;
+  display: none;
+  text-align: center;
 }
 
 #playBtn {
@@ -27,9 +64,33 @@ canvas {
   top: 0;
   right: 0;
   padding: 10px 20px;
-  background-color: black;
+  background-color: transparent;
   color: #fff;
   border: none;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 30px;
+}
+
+/* #audio-play {
+  font-size: 30px;
+  color: #fff;
+  background-color: transparent;
+  border: none;
+  display: block;
+} */
+
+.color {
+  --hue: 0;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: hsl(var(--hue), 50%, 95%);
+  text-shadow: 0 0 5px hsl(var(--hue), 60%, 90%, 0.8), 0 0 20px hsl(var(--hue), 70%, 80%, 0.85), 0 0 10px hsl(var(--hue), 80%, 70%, 0.9), 0 0 10px hsl(var(--hue), 90%, 60%, 0.95), 0 0 30px hsl(var(--hue), 100%, 50%, 1);
+}
+
+.colors {
+  --hue: 0;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: hsl(var(--hue), 50%, 95%);
+  box-shadow: 0 0 5px hsl(var(--hue), 60%, 90%, 0.8), 0 0 20px hsl(var(--hue), 70%, 80%, 0.85), 0 0 10px hsl(var(--hue), 80%, 70%, 0.9), 0 0 10px hsl(var(--hue), 90%, 60%, 0.95), 0 0 30px hsl(var(--hue), 100%, 50%, 1);
 }

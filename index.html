@@ -1,17 +1,31 @@
-  <!DOCTYPE html>
-  <html lang="ko">
+<!DOCTYPE html>
+<html lang="ko">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/main.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.1/gsap.min.js" integrity="sha512-qF6akR/fsZAB4Co1QDDnUXWnaQseLGXoniuSuSlPQK6+aWhlMZcHzkasCSlnWoe+TJuudlka1/IQ01Dnhgq95g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="./css/main.css" />
     <title>똥 피하기</title>
-</head>
-<body>
-  <div>
-  <canvas id="canvas"></canvas>
-  <button id="playBtn">Play</button>
-</div>
-  <script src="./main.js"></script>
-</body>
-  </html>
-  
+  </head>
+  <body>
+    <div class="a color">
+      <div class="b">
+        <p class="life">Life : <span id="life">3</span></p>
+        <p class="time">Time : <span id="time">0</span></p>
+        <p class="score">Score : <span id="score">0</span></p>
+        <p class="highScore">High Score: <span id="highScore">0</span></p>
+
+        <!-- <button id="audio-play">Audio-Play</button> -->
+      </div>
+    </div>
+    <div class="wrap colors">
+      <canvas id="canvas"></canvas>
+      <button id="playBtn">Play</button>
+      <div class="gameOver">
+        <p>Game Over</p>
+        <p class="score">Score : <span id="score1">0</span></p>
+      </div>
+    </div>
+    <script src="./main.js"></script>
+  </body>
+</html>
