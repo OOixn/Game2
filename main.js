@@ -100,20 +100,24 @@ const obstacleImages = [];
 
 // 각 장애물 이미지 객체 생성 및 배열에 추가
 const imgObstacle1 = new Image();
-imgObstacle1.src = "../img/st.png";
+imgObstacle1.src = "../img/1.png";
 obstacleImages.push(imgObstacle1);
 
 const imgObstacle2 = new Image();
-imgObstacle2.src = "../img/st.png";
+imgObstacle2.src = "../img/2.png";
 obstacleImages.push(imgObstacle2);
 
 const imgObstacle3 = new Image();
-imgObstacle3.src = "../img/st.png";
+imgObstacle3.src = "../img/3.png";
 obstacleImages.push(imgObstacle3);
 
 const imgObstacle4 = new Image();
-imgObstacle4.src = "../img/gf.png";
+imgObstacle4.src = "../img/4.png";
 obstacleImages.push(imgObstacle4);
+
+const imgObstacle5 = new Image();
+imgObstacle5.src = "../img/meso.png";
+obstacleImages.push(imgObstacle5);
 
 // 장애물 클래스
 class Obstacle {
@@ -141,10 +145,11 @@ const obstacles = [];
 
 // 장애물 종류 및 초기화 함수
 const obstacleTypes = [
-  { width: 100, height: 98, speed: 1, image: obstacleImages[0], special: false },
-  { width: 50, height: 49, speed: 4, image: obstacleImages[1], special: false },
-  { width: 35, height: 34, speed: 5, image: obstacleImages[2], special: false },
-  { width: 30, height: 30, speed: 7, image: obstacleImages[3], special: true },
+  { width: 52, height: 20, speed: 4, image: obstacleImages[0], special: false },
+  { width: 26, height: 42, speed: 4.5, image: obstacleImages[1], special: false },
+  { width: 22, height: 56, speed: 5, image: obstacleImages[2], special: false },
+  { width: 80, height: 40, speed: 2, image: obstacleImages[3], special: false },
+  { width: 30, height: 29, speed: 7, image: obstacleImages[4], special: true },
 ];
 
 // 초기 장애물 생성
