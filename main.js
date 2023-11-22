@@ -6,7 +6,6 @@ canvas.height = 600;
 
 // 게임 변수
 let score = 0; // 현재 점수
-let scoreInterval; // 점수 업데이트에 사용되는 인터벌
 let time = 0; // 시작 시간
 let timeInterval; // 시간 업데이트에 사용되는 인터벌
 let timer = 0; // 시간 측정을 위한 타이머
@@ -187,12 +186,12 @@ function checkCollisions() {
       console.log(obstacle);
       // 만약 장애물이 특수한 경우이면 점수 +200
       if (obstacle.special) {
-        score += 200;
+        score += 100;
       } else {
         // 특수한 경우가 아니면 생명력 -1 점수 -100 무적 상태로 만듦
         makeCharacterInvincible();
         life--;
-        score -= 100;
+        score -= 50;
       }
       // 충돌한 장애물을 장애물 배열에서 제거
       obstacles.splice(obstacles.indexOf(obstacle), 1);
@@ -320,11 +319,6 @@ function endGame() {
   highScoreItem.innerHTML = highScore;
 }
 
-// 스코어 증가 함수
-function increaseScore() {
-  score++;
-}
-
 // 시간 증가 함수
 function increaseTime() {
   time++;
@@ -348,7 +342,7 @@ function animate() {
   obstacles.forEach((obstacle, i, array) => {
     if (obstacle.y + obstacle.height > 455) {
       array.splice(i, 1); // 장애물이 화면 아래로 벗어났을 때 배열에서 제거
-      score += 20; // 스코어 20점 추가
+      score += 5; // 스코어 20점 추가
     }
     obstacle.draw();
   });
@@ -383,13 +377,11 @@ const playBtn = document.getElementById("playBtn");
 playBtn.addEventListener("click", startGame); // 게임 시작 버튼에 클릭 `이벤트 리스너 등록
 
 function startGame() {
-  clearInterval(scoreInterval);
   clearInterval(timeInterval);
 
   cancelAnimationFrame(animation); // 현재 게임 애니메이션 프레임 초기화
   animation = requestAnimationFrame(animate); // 애니메이션 시작
   score = 0; // 스코어 초기화
-  scoreInterval = setInterval(increaseScore, 1000); // 스코어 증가 인터벌 설정
   time = 0; // 시간 초기화
   timeInterval = setInterval(increaseTime, 1000); // 시간 감소 인터벌 설정
   playBtn.style.display = "none"; // 게임 시작 버튼 숨김
