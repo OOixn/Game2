@@ -13,7 +13,7 @@ body {
   margin-bottom: 15px;
 }
 
-.b {
+.a > .b {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -25,7 +25,7 @@ body {
   /* box-sizing: border-box; */
 }
 
-p {
+.a > .b > p {
   font-size: 24px;
   letter-spacing: 5px;
   margin: 0;
@@ -42,7 +42,7 @@ p {
   margin: 0 auto;
 }
 
-canvas {
+.wrap > canvas {
   width: 1000px;
   height: 600px;
   background-image: url("../img/2d5.jpg");
@@ -51,7 +51,7 @@ canvas {
   z-index: -1;
 }
 
-.gameOver {
+.wrap > .gameOver {
   position: absolute;
   top: 40%;
   left: 40%;
@@ -59,7 +59,7 @@ canvas {
   text-align: center;
 }
 
-#playBtn {
+.wrap > #playBtn {
   position: absolute;
   top: 0;
   right: 0;
@@ -70,14 +70,6 @@ canvas {
   cursor: pointer;
   font-size: 30px;
 }
-
-/* #audio-play {
-  font-size: 30px;
-  color: #fff;
-  background-color: transparent;
-  border: none;
-  display: block;
-} */
 
 .color {
   --hue: 0;

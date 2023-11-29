@@ -10,6 +10,7 @@ let time = 0; // 시작 시간
 let timeInterval; // 시간 업데이트에 사용되는 인터벌
 let timer = 0; // 시간 측정을 위한 타이머
 let animation; // 게임 애니메이션 프레임
+let isGameOver = false;
 
 // 화살표 키 상태 변수
 let left = false; // 왼쪽 화살표 키 상태 (눌림/안눌림)
@@ -302,6 +303,7 @@ highScoreItem.innerHTML = highScore;
 
 // 게임 종료
 function endGame() {
+  isGameOver = true;
   score += time * 20; // 게임 종료시 점수에 시간을 곱해서 더해줌
   cancelAnimationFrame(animation); // 현재 게임 애니메이션 프레임 초기화
   obstacles.length = 0; // 장애물 배열 초기화
@@ -329,9 +331,24 @@ const scoreId = document.querySelector("#score");
 const score1Id = document.querySelector("#score1");
 const timeId = document.querySelector("#time");
 
-// 애니메이션 함수
-function animate() {
-  animation = requestAnimationFrame(animate); // 애니메이션 프레임 요청
+let lastFrameTime = 0;
+const fps = 60;
+const frameDuration = 1000 / fps;
+
+function animate(now) {
+  requestAnimationFrame(animate);
+
+  if (isGameOver) {
+    return;
+  }
+
+  const deltaTime = now - lastFrameTime;
+  if (deltaTime < frameDuration) {
+    return; // 시간 간격이 충분하지 않으면 렌더링하지 않음
+  }
+
+  lastFrameTime = now - (deltaTime % frameDuration);
+
   timer++; // 타이머 증가로 시간 경과 추적
   ctx.clearRect(0, 0, canvas.width, canvas.height); // 캔버스 초기화
   moveObstacles(); // 장애물 이동 처리
@@ -350,35 +367,34 @@ function animate() {
   checkCollisions(); // 충돌 확인
   gameUpdate(); // 게임 난이도 업데이트
 
-  if (left && character.x - 5 > 0) {
-    if (!invincible) {
-      character.x -= 5; // 왼쪽 화살표 키가 눌렸고, 캐릭터가 화면 왼쪽 안쪽에 있을 때 왼쪽으로 이동
-    }
+  if (left && character.x - 5 > 0 && !invincible) {
+    character.x -= 5; // 왼쪽 화살표 키가 눌렸고, 캐릭터가 화면 왼쪽 안쪽에 있을 때 왼쪽으로 이동
+  }
+  if (right && character.x + character.width + 5 < canvas.width && !invincible) {
+    character.x += 5; // 오른쪽 화살표 키가 눌렸고, 캐릭터가 화면 오른쪽 안쪽에 있을 때 오른쪽으로 이동
   }
 
-  if (right && character.x + character.width + 5 < canvas.width) {
-    if (!invincible) {
-      character.x += 5; // 오른쪽 화살표 키가 눌렸고, 캐릭터가 화면 오른쪽 안쪽에 있을 때 오른쪽으로 이동
-    }
+  if (timer % 10 === 0) {
+    updateCharacterFrame(); // 캐릭터 프레임 업데이트
   }
+
+  character.draw(); // 캐릭터 그리기
 
   lifeId.innerHTML = life;
   scoreId.innerHTML = score;
   score1Id.innerHTML = score;
   timeId.innerHTML = time;
-
-  if (timer % 10 === 0) {
-    updateCharacterFrame();
-  }
-  character.draw();
 }
+
+// 게임 시작 및 기타 함수는 변경 없이 그대로 사용
 
 const playBtn = document.getElementById("playBtn");
 playBtn.addEventListener("click", startGame); // 게임 시작 버튼에 클릭 `이벤트 리스너 등록
 
 function startGame() {
-  clearInterval(timeInterval);
+  isGameOver = false;
 
+  clearInterval(timeInterval);
   cancelAnimationFrame(animation); // 현재 게임 애니메이션 프레임 초기화
   animation = requestAnimationFrame(animate); // 애니메이션 시작
   score = 0; // 스코어 초기화
@@ -390,19 +406,3 @@ function startGame() {
 
   initObstacles(); // 장애물 초기화
 }
-
-// 오디오 요소 생성
-// const audio = new Audio("bgm.mp3"); // 오디오 파일 경로 지정
-
-// // 재생 버튼 클릭 이벤트 처리
-// const audioPlayBtn = document.getElementById("audio-play");
-
-// audioPlayBtn.addEventListener("click", function () {
-//   if (audio.paused) {
-//     audio.play();
-//     audioPlayBtn.textContent = "Audio-Pause";
-//   } else {
-//     audio.pause();
-//     audioPlayBtn.textContent = "Audio-Play";
-//   }
-// });
