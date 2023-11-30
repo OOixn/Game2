@@ -53,10 +53,15 @@ body {
 
 .wrap > .gameOver {
   position: absolute;
-  top: 40%;
-  left: 40%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: none;
   text-align: center;
+  font-size: 30px;
+  width: 200px;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .wrap > #playBtn {
